@@ -3,16 +3,18 @@ from bs4 import BeautifulSoup
 from pystyle import Colors, Colorate
 
 banner = r"""
-             ▄████▄▓██   ██▓  ██████  ▄▄▄       █     █░▄▄▄█████▓ ▒█████   ▒█████   ██▓    
-            ▒██▀ ▀█ ▒██  ██▒▒██    ▒ ▒████▄    ▓█░ █ ░█░▓  ██▒ ▓▒▒██▒  ██▒▒██▒  ██▒▓██▒    
-            ▒▓█    ▄ ▒██ ██░░ ▓██▄   ▒██  ▀█▄  ▒█░ █ ░█ ▒ ▓██░ ▒░▒██░  ██▒▒██░ ██▒▒██░    
-            ▒▓▓▄ ▄██▒░ ▐██▓░  ▒   ██▒░██▄▄▄▄██ ░█░ █ ░█ ░ ▓██▓ ░ ▒██   ██░▒██   ██░▒██░    
-            ▒ ▓███▀ ░░ ██▒▓░▒██████▒▒ ▓█   ▓██▒░░██▒██▓   ▒██▒ ░ ░ ████▓▒░░ ████▓▒░░██████▒
-            ░ ░▒ ▒  ░ ██▒▒▒ ▒ ▒▓▒ ▒ ░ ▒▒   ▓▒█░░ ▓░▒ ▒    ▒ ░░   ░ ▒░▒░▒░ ░ ▒░▒░▒░ ░ ▒░▓  ░
-              ░  ▒  ▓██ ░▒░ ░ ░▒  ░ ░  ▒   ▒▒ ░  ▒ ░ ░      ░      ░ ▒ ▒░   ░ ▒ ▒░ ░ ░ ▒  ░
-            ░       ▒ ▒ ░░  ░  ░  ░    ░   ▒     ░   ░    ░      ░ ░ ░ ▒  ░ ░ ░ ▒    ░ ░   
-            ░ ░     ░ ░           ░        ░  ░    ░                 ░ ░      ░ ░      ░  ░
-            ░       ░ ░                                                                    
+
+                 ▄████▄▓██   ██▓  ██████  ▄▄▄       █     █░▄▄▄█████▓ ▒█████   ▒█████   ██▓    
+                ▒██▀ ▀█ ▒██  ██▒▒██    ▒ ▒████▄    ▓█░ █ ░█░▓  ██▒ ▓▒▒██▒  ██▒▒██▒  ██▒▓██▒    
+                ▒▓█    ▄ ▒██ ██░░ ▓██▄   ▒██  ▀█▄  ▒█░ █ ░█ ▒ ▓██░ ▒░▒██░  ██▒▒██░ ██▒▒██░    
+                ▒▓▓▄ ▄██▒░ ▐██▓░  ▒   ██▒░██▄▄▄▄██ ░█░ █ ░█ ░ ▓██▓ ░ ▒██   ██░▒██   ██░▒██░    
+                ▒ ▓███▀ ░░ ██▒▓░▒██████▒▒ ▓█   ▓██▒░░██▒██▓   ▒██▒ ░ ░ ████▓▒░░ ████▓▒░░██████▒
+                ░ ░▒ ▒  ░ ██▒▒▒ ▒ ▒▓▒ ▒ ░ ▒▒   ▓▒█░░ ▓░▒ ▒    ▒ ░░   ░ ▒░▒░▒░ ░ ▒░▒░▒░ ░ ▒░▓  ░
+                  ░  ▒  ▓██ ░▒░ ░ ░▒  ░ ░  ▒   ▒▒ ░  ▒ ░ ░      ░      ░ ▒ ▒░   ░ ▒ ▒░ ░ ░ ▒  ░
+                ░       ▒ ▒ ░░  ░  ░  ░    ░   ▒     ░   ░    ░      ░ ░ ░ ▒  ░ ░ ░ ▒    ░ ░   
+                ░ ░     ░ ░           ░        ░  ░    ░                 ░ ░      ░ ░      ░  ░
+                ░       ░ ░                                                                    
+                
 """
 
 def print_status(message):
@@ -99,11 +101,20 @@ if __name__ == "__main__":
     print()
 
     computer_name = socket.gethostname()
-    user_input = input(f"   {Colors.blue}┌───({Colors.white}{computer_name}{Colors.blue})\n   └──$ {Colors.white}Enter AppID: {Colors.reset}").strip()
+    print(f"   {Colors.blue}┌───({Colors.white}{computer_name}{Colors.blue}){Colors.reset}")
 
-    if user_input:
-        protected_link = get_download_link_from_api(user_input)
-        if protected_link:
-            bypass_shrink_protection(protected_link)
-    else:
-        print_status("No AppID provided")
+    while True:
+        try:
+            user_input = input(f"{Colors.blue}   └──$ {Colors.reset}Enter AppID: ").strip()
+            if not user_input:
+                print_status("No AppID provided. Exiting.")
+                break
+
+            protected_link = get_download_link_from_api(user_input)
+            if protected_link:
+                bypass_shrink_protection(protected_link)
+            else:
+                print_status("No valid download link found for this AppID.")
+        except KeyboardInterrupt:
+            print("\nExiting by user request.")
+            break
