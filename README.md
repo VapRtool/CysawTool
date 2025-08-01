@@ -76,7 +76,7 @@ python main.py
 
 ```
 CysawTool/
-├── cysaw.py           # Main script
+├── main.py           # Main script
 ├── requirements.txt   # Python dependencies
 ├── setup.bat          # Automatic installation
 ├── start.bat          # Quick launch
