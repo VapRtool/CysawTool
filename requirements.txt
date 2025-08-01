@@ -1,0 +1,4 @@
+requests
+cloudscraper
+beautifulsoup4
+pystyle
