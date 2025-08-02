@@ -11,7 +11,8 @@
 ## 🤡
 ![clown](image.png)
 ---
-
+## STATUS: - WORKING -
+---
 
 **CysawTool** is a Python tool that automatically downloads applications from cysaw.org by bypassing ShrinkMe protected links.
 
