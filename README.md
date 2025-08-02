@@ -8,13 +8,16 @@
 > And if Cysaw releases an update, the tool will be updated within 30 minutes! (Or much if its by night, my time code: https://time.is/Paris)
 
 
+# NOT OPEN SOURCE ANYMORE TO PREVENT TOOL PATCH 😘
+
+
 ## 🤡
 ![clown](image.png)
 ---
 ## STATUS: - WORKING -
 ---
 
-**CysawTool** is a Python tool that automatically downloads applications from cysaw.org by bypassing ShrinkMe protected links.
+**CysawTool** is a tool that automatically downloads applications from cysaw.org by bypassing ShrinkMe protected links.
 
 ## ✨ Features
 
@@ -24,7 +27,7 @@
 * 🎨 Colorful and intuitive command-line interface
 * ⚡ Fast and efficient processing
 
-# NOT OPEN SOURCE ANYMORE TO PREVENT TOOL PATCH 😘
+
 
 ## 📄 License
 
