@@ -1,325 +1,145 @@
 import os
-import re
 import time
 import socket
 import zipfile
-import requests
-import threading
 import cloudscraper
+import random
+import string
+import json
 from bs4 import BeautifulSoup
 from pystyle import Colors, Colorate
 from fake_useragent import UserAgent
 
-ua = UserAgent()
-
-banner = """\n
-                 ▄████▄▓██   ██▓  ██████  ▄▄▄       █     █░▄▄▄█████▓ ▒█████   ▒█████   ██▓    
-                ▒██▀ ▀█ ▒██  ██▒▒██    ▒ ▒████▄    ▓█░ █ ░█░▓  ██▒ ▓▒▒██▒  ██▒▒██▒  ██▒▓██▒    
-                ▒▓█    ▄ ▒██ ██░░ ▓██▄   ▒██  ▀█▄  ▒█░ █ ░█ ▒ ▓██░ ▒░▒██░  ██▒▒██░  ██▒▒██░    
-                ▒▓▓▄ ▄██▒░ ▐██▓░  ▒   ██▒░██▄▄▄▄██ ░█░ █ ░█ ░ ▓██▓ ░ ▒██   ██░▒██   ██░▒██░    
-                ▒ ▓███▀ ░░ ██▒▓░▒██████▒▒ ▓█   ▓██▒░░██▒██▓   ▒██▒ ░ ░ ████▓▒░░ ████▓▒░░██████▒
+banner = r"""
+                 ▄████▄▓██   ██▓  ██████  ▄▄▄       █     █░▄▄▄█████▓ ▒█████   ▒█████   ██▓
+                ▒██▀ ▀█ ▒██  ██▒▒██    ▒ ▒████▄    ▓█░ █ ░█░▓  ██▒ ▓▒▒██▒  ██▒▒██▒  ██▒▓██▒
+                ▒▓█    ▄ ▒██ ██░░ ▓██▄   ▒██  ▀█▄  ▒█░ █ ░█ ▒ ▓██░ ▒░▒██░  ██▒▒██░ ██▒▒██░
+                ▒▓▓▄ ▄██▒░ ▐██▓░  ▒   ██▒░██▄▄▄▄██ ░█░ █ ░█ ░ ▓██▓ ░ ▒██   ██░▒██   ██░▒██░
+                ▒ ▓███▀ ░░ ██▒▓░▒██████▒▒ ▓█   ▓██▒░░██▒██▓   ▒██▒ ░ ░ ████▓▒░░ ████▓▒░░ ████▓▒░░██████▒
                 ░ ░▒ ▒  ░ ██▒▒▒ ▒ ▒▓▒ ▒ ░ ▒▒   ▓▒█░░ ▓░▒ ▒    ▒ ░░   ░ ▒░▒░▒░ ░ ▒░▒░▒░ ░ ▒░▓  ░
                   ░  ▒  ▓██ ░▒░ ░ ░▒  ░ ░  ▒   ▒▒ ░  ▒ ░ ░      ░      ░ ▒ ▒░   ░ ▒ ▒░ ░ ░ ▒  ░
-                ░       ▒ ▒ ░░  ░  ░  ░    ░   ▒     ░   ░    ░      ░ ░ ░ ▒  ░ ░ ░ ▒    ░ ░   
+                ░       ▒ ▒ ░░  ░  ░  ░    ░   ▒     ░   ░    ░      ░ ░ ░ ▒  ░ ░ ░ ▒    ░ ░
                 ░ ░     ░ ░           ░        ░  ░    ░                 ░ ░      ░ ░      ░  ░
-                ░       ░ ░                                                                    
-
+                ░       ░ ░
 """
 
-def print_status(message):
-    print(f"  {Colors.blue} └──${Colors.white} {message}{Colors.reset}")
+def print_status(msg, err=False):
+    color = Colors.red if err else Colors.white
+    print(f"   {Colors.blue}└──${Colors.reset} {color}{msg}{Colors.reset}")
 
-def establish_cysaw_session(application_id):
-    scraper = cloudscraper.create_scraper(
-        allow_brotli=False,
-        browser={
-            'browser': 'chrome',
-            'platform': 'windows',
-            'mobile': False
-        }
-    )
-    
-    user_agent = ua.random
+ua = UserAgent()
+user_agent = ua.random
+scraper = cloudscraper.create_scraper()
+scraper.headers.update({"User-Agent": user_agent})
+
+_0x1a2b = '5ff1e8b450d52e78678e870c629d6d07737a211572db5739a40caee6f5fa6ee8'
+_0x3c4d = '688e0e86d5f1a'
+_0x7g8h = 'e1e68f2c4a59734be909a9a5e0dfdc6b'
+_0x9i0j = 'd69c73b965f15bc267c39fcc0916e976'
+_0xk1l2 = '3'
+rand_str = ''.join(random.choices(string.ascii_lowercase + string.digits, k=10))
+csrf_token = f"{_0x1a2b}{_0x9i0j[:8]}_{rand_str}"
+session_id = f"{_0x3c4d}{_0x9i0j[8:16]}_{rand_str}"
+user_interactions = random.randint(5, 20)
+
+def get_download_link(app_id):
+    print_status(f"Requesting download link for AppID: {app_id}")
     headers = {
-        "user-agent": user_agent,
-        "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-        "accept-language": "en-US,en;q=0.5",
-        "accept-encoding": "gzip, deflate",
-        "connection": "keep-alive",
-        "upgrade-insecure-requests": "1",
-        "cache-control": "max-age=0"
+        "accept": "*/*", "content-type": "application/json", "origin": "https://cysaw.org",
+        "referer": "https://cysaw.org/", "X-CSRF-Token": csrf_token,
+        "X-Session-ID": session_id, "X-User-Interactions": str(user_interactions)
     }
-    
+    payload = {"appId": app_id, "csrfToken": csrf_token, "sessionId": session_id,
+               "userInteractions": user_interactions, "sessionHash": _0x7g8h, "pageVisits": _0xk1l2}
     try:
-        response = scraper.get("https://cysaw.org/", headers=headers, timeout=15)
-        
-        if response.status_code != 200:
-            return None
-            
-        csrf_token = None
-        session_id = None
-        content = response.text
-        
-        csrf_match = re.search(r"const csrfToken = '([^']+)'", content)
-        if csrf_match:
-            csrf_token = csrf_match.group(1)
-        
-        session_match = re.search(r"const sessionId = '([^']+)'", content)
-        if session_match:
-            session_id = session_match.group(1)
-        
-        return {
-            'scraper': scraper,
-            'user_agent': user_agent,
-            'csrf_token': csrf_token,
-            'session_id': session_id,
-            'headers': headers
-        }
-        
-    except Exception:
-        return None
+        r = scraper.post("https://cysaw.org/api.php", json=payload, headers=headers, timeout=15)
+        r.raise_for_status()
+        j = r.json()
+        if j.get("status") == "success" and j.get("downloadUrl"):
+            print_status("Successfully retrieved protected link.")
+            return j["downloadUrl"]
+        print_status("API Failure: " + j.get("message", "No link"), True)
+    except Exception as e:
+        print_status(f"API error: {e}", True)
+    return None
 
-def get_download_link_from_api(session_data, application_id):
-    if not session_data:
-        return None
-        
-    scraper = session_data['scraper']
-    user_interactions = 15
-    
-    api_headers = {
-        "accept": "application/json, text/plain, */*",
-        "content-type": "application/json",
-        "origin": "https://cysaw.org",
-        "referer": "https://cysaw.org/",
-        "user-agent": session_data['user_agent'],
-        "X-CSRF-Token": session_data['csrf_token'],
-        "X-Session-ID": session_data['session_id'],
-        "X-User-Interactions": str(user_interactions)
-    }
-    
-    api_payload = {
-        "appId": application_id,
-        "csrfToken": session_data['csrf_token'],
-        "sessionId": session_data['session_id'],
-        "userInteractions": user_interactions
-    }
-    
+def bypass_shrink(url):
+    print_status(f"Processing protected link: {url}")
     try:
-        api_response = scraper.post(
-            "https://cysaw.org/api.php", 
-            json=api_payload, 
-            headers=api_headers,
-            timeout=15
-        )
-        
-        if api_response.status_code == 403:
+        code = url.rstrip("/").split("/")[-1]
+        page = f"https://en.shrinke.me/{code}"
+        r1 = scraper.get(page, headers={"referer": "https://mrproblogger.com/"}, timeout=20)
+        r1.raise_for_status()
+        soup = BeautifulSoup(r1.content, "html.parser")
+        data = {i.get('name'): i.get('value') for i in soup.find_all("input") if i.get('name')}
+        if not data:
+            print_status("Bypass failed: No form inputs.", True)
             return None
-            
-        api_response.raise_for_status()
-        response_data = api_response.json()
-        
-        if response_data.get("status") == "success":
-            return {
-                "downloadUrl": response_data["downloadUrl"],
-                "dirName": response_data.get("dirName"),
-                "session_data": session_data,
-                "full_response": response_data
-            }
-        else:
-            return None
-            
-    except Exception:
-        return None
-
-def mark_downloaded_async(session_data, dir_name):
-    try:
-        scraper = session_data['scraper']
-        
-        mark_headers = {
-            "accept": "application/json, text/plain, */*",
-            "content-type": "application/json",
-            "origin": "https://cysaw.org",
-            "referer": "https://cysaw.org/",
-            "user-agent": session_data['user_agent'],
-            "X-CSRF-Token": session_data['csrf_token'],
-            "X-Session-ID": session_data['session_id']
-        }
-        
-        mark_payload = {
-            "dirName": dir_name,
-            "csrfToken": session_data['csrf_token'],
-            "sessionId": session_data['session_id']
-        }
-        
-        scraper.post(
-            "https://cysaw.org/mark_downloaded.php",
-            json=mark_payload,
-            headers=mark_headers,
-            timeout=10
-        )
-            
-    except Exception:
-        pass
-
-def bypass_shrink_protection_and_download(download_data):
-    protected_url = download_data["downloadUrl"]
-    session_data = download_data["session_data"]
-    dir_name = download_data.get("dirName")
-    
-    shrink_scraper = cloudscraper.create_scraper(
-        allow_brotli=False,
-        browser={
-            'browser': 'chrome',
-            'platform': 'windows',
-            'mobile': False
-        }
-    )
-    
-    shrink_domain = "https://en.shrinke.me"
-    url_code = protected_url.rstrip("/").split("/")[-1]
-    target_url = f"{shrink_domain}/{url_code}"
-    print_status("Processing protected link...")
-    
-    try:
-        user_agent = session_data['user_agent']
-        
-        shrink_headers = {
-            "referer": "https://mrproblogger.com/",
-            "user-agent": user_agent,
-            "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-            "accept-language": "en-US,en;q=0.5",
-            "accept-encoding": "gzip, deflate",
-            "connection": "keep-alive",
-            "upgrade-insecure-requests": "1"
-        }
-        
-        page_response = shrink_scraper.get(target_url, headers=shrink_headers)
-        page_soup = BeautifulSoup(page_response.content, "html.parser")
-        
-        form_inputs = page_soup.find_all("input")
-        form_data = {inp.get('name'): inp.get('value') for inp in form_inputs if inp.get('name')}
-        
-        print_status("Waiting for bypass timer...")
-        
-        if dir_name:
-            mark_thread = threading.Thread(
-                target=mark_downloaded_async, 
-                args=(session_data, dir_name)
-            )
-            mark_thread.start()
-        
+        print_status("Waiting for bypass timer (15 seconds)...")
         time.sleep(15)
-        
-        bypass_headers = shrink_headers.copy()
-        bypass_headers.update({
-            "x-requested-with": "XMLHttpRequest",
-            "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
-            "referer": target_url
-        })
-        
-        bypass_response = shrink_scraper.post(
-            f"{shrink_domain}/links/go", 
-            data=form_data, 
-            headers=bypass_headers
-        )
-        
-        if bypass_response.status_code != 200:
-            print_status("Bypass failed")
-            return
-            
-        response_json = bypass_response.json()
-        direct_url = response_json.get("url")
+        r2 = scraper.post("https://en.shrinke.me/links/go", data=data,
+                          headers={"x-requested-with": "XMLHttpRequest", "referer": page}, timeout=20)
+        r2.raise_for_status()
+        j = r2.json()
+        if j.get("url"):
+            print_status("Direct link obtained. Proceeding to download...")
+            return j["url"]
+        print_status("Bypass failed: " + j.get("message", "No URL found"), True)
+    except Exception as e:
+        print_status(f"Bypass error: {e}", True)
+    return None
 
-        if direct_url:
-            print_status("Downloading and extracting file...")
-            
-            if dir_name:
-                mark_thread.join(timeout=5)
-            
-            download_with_cysaw_session(session_data, direct_url)
-        else:
-            print_status("Bypass failed: No download URL found")
-            
-    except Exception as error:
-        print_status(f"Bypass error: {error}")
-
-def download_with_cysaw_session(session_data, download_url):
+def download_and_extract(url):
+    print_status(f"Attempting to download from: {url}")
     try:
-        scraper = session_data['scraper']
-        
-        download_headers = {
-            "user-agent": session_data['user_agent'],
-            "accept": "application/octet-stream,*/*",
-            "accept-language": "en-US,en;q=0.5", 
-            "accept-encoding": "gzip, deflate",
-            "referer": "https://cysaw.org/",
-            "connection": "keep-alive"
-        }
-        
-        file_response = scraper.get(download_url, stream=True, timeout=30, headers=download_headers)
-
-        if file_response.status_code != 200:
-            print_status(f"Failed to download file. Status code: {file_response.status_code}")
-            return
-
-        content_disposition = file_response.headers.get('Content-Disposition', '')
-        if "filename=" in content_disposition:
-            zip_filename = content_disposition.split("filename=")[1].strip("\"'")
+        headers = {'User-Agent': user_agent, 'Referer': 'https://en.shrinke.me/',
+                   'Accept': '*/*', 'Accept-Language': 'en-US,en;q=0.9,fr;q=0.8', 'Connection': 'keep-alive'}
+        print_status("Adding a small delay before final download...")
+        time.sleep(2)
+        r = scraper.get(url, stream=True, timeout=30, allow_redirects=True, headers=headers)
+        r.raise_for_status()
+        cd = r.headers.get('Content-Disposition', '')
+        filename = "downloaded_file.zip"
+        if "filename=" in cd:
+            filename = cd.split("filename=")[1].strip("\"'")
         else:
-            zip_filename = download_url.split("/")[-1].split("?")[0]
-
-        if not zip_filename.endswith(".zip"):
-            if not any(zip_filename.endswith(ext) for ext in ['.rar', '.7z', '.tar.gz']):
-                zip_filename += ".zip"
-
-        print_status(f"Downloaded: {zip_filename}")
-
-        with open(zip_filename, "wb") as zip_file:
-            for chunk in file_response.iter_content(chunk_size=8192):
-                if chunk:
-                    zip_file.write(chunk)
-
-        if zip_filename.endswith(".zip"):
-            try:
-                extract_folder = os.path.splitext(zip_filename)[0]
-                with zipfile.ZipFile(zip_filename, 'r') as archive:
-                    archive.extractall(extract_folder)
-                print_status(f"Extracted to: {extract_folder}")
-                
-                os.remove(zip_filename)
-                print_status(f"Cleaned up: {zip_filename}")
-            except zipfile.BadZipFile:
-                print_status("File is not a valid ZIP archive, keeping as-is")
-
-    except Exception as error:
-        print_status(f"Download error: {error}")
+            name = os.path.basename(url.split("?")[0])
+            if name.endswith(".zip"):
+                filename = name
+        print_status(f"Downloading file: {filename}")
+        with open(filename, "wb") as f:
+            for chunk in r.iter_content(chunk_size=8192): f.write(chunk)
+        print_status(f"Downloaded: {filename}")
+        extract_to = os.path.splitext(filename)[0]
+        os.makedirs(extract_to, exist_ok=True)
+        with zipfile.ZipFile(filename, 'r') as archive: archive.extractall(extract_to)
+        print_status(f"Extracted to: {extract_to}")
+        os.remove(filename)
+        print_status(f"Cleaned up: Removed {filename}")
+    except Exception as e:
+        print_status(f"Unexpected download error: {e}", True)
 
 if __name__ == "__main__":
     os.system("cls" if os.name == "nt" else "clear")
     print(Colorate.Vertical(Colors.blue_to_white, banner))
-    print()
-    computer_name = socket.gethostname()
-    print(f"   {Colors.blue}┌───({Colors.white}{computer_name}{Colors.blue}){Colors.reset}")
-    
+    hostname = socket.gethostname()
+    print(f"   {Colors.blue}┌───({Colors.white}{hostname}{Colors.blue}){Colors.reset}")
+    print_status("Session started. Cloudscraper initialized.")
+    scraper.get("https://cysaw.org/")
+    print_status(f"Using User-Agent: {user_agent}")
     while True:
         try:
-            user_input = input(f"{Colors.blue}   └──$ {Colors.reset}Enter AppID: ").strip()
-            if not user_input:
-                print_status("No AppID provided. Exiting.")
-                break
-                
-            session_data = establish_cysaw_session(user_input)
-            if not session_data:
-                print_status("Failed to establish session")
-                continue
-                
-            download_data = get_download_link_from_api(session_data, user_input)
-            if not download_data:
-                print_status("No valid download link found for this AppID.")
-                continue
-                
-            bypass_shrink_protection_and_download(download_data)
-                
+            user_input = input(f"   {Colors.blue}└──$ {Colors.reset}Enter AppID (or 'exit'): ").strip()
+            if user_input.lower() == 'exit': print_status("Exiting."); break
+            if not user_input: print_status("AppID cannot be empty.", True); continue
+            p = get_download_link(user_input)
+            if p:
+                d = bypass_shrink(p)
+                if d: download_and_extract(d)
+                else: print_status("Bypass failed.", True)
+            else: print_status("No valid link.", True)
         except KeyboardInterrupt:
-            print("\nExiting by user request.")
-            break
+            print(); print_status("Interrupted."); break
+        except Exception as e:
+            print_status(f"Error: {e}", True)
+    print_status("Session ended.")
