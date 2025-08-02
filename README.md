@@ -1,5 +1,14 @@
 # 🔧 CysawTool
 
+> \[!WARNING]
+> On the Cysaw Discord, they say:
+> *“Do not try to bypass ads or use automated tools. This may result in temporary access restrictions. Please use the website normally through your browser.”*
+>
+> The reality is they **can’t detect** this tool — it’s highly advanced and designed to avoid detection. So don’t worry, you won’t get banned from the website.
+> And if Cysaw releases an update, the tool will be updated within 30 minutes! (Or much if its by night, my time code: https://time.is/Paris)
+
+---
+
 **CysawTool** is a Python tool that automatically downloads applications from cysaw.org by bypassing ShrinkMe protected links.
 
 ## ✨ Features
