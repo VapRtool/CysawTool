@@ -20,7 +20,7 @@
 ### Automatic installation (Windows)
 
 ```bash
-git clone https://github.com/kikkopy/CysawTool.git
+git clone https://github.com/VapRtool/CysawTool.git
 cd CysawTool
 setup.bat
 ```
@@ -28,7 +28,7 @@ setup.bat
 ### Manual installation
 
 ```bash
-git clone https://github.com/kikkopy/CysawTool.git
+git clone https://github.com/VapRtool/CysawTool.git
 cd CysawTool
 pip install -r requirements.txt
 ```
