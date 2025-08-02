@@ -1,6 +1,6 @@
 # 🔧 CysawTool
 
-> \[!WARNING]
+> \[!NOTE]
 > On the Cysaw Discord, they say:
 > *“Do not try to bypass ads or use automated tools. This may result in temporary access restrictions. Please use the website normally through your browser.”*
 >
