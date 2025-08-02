@@ -12,8 +12,6 @@
 ![clown](image.png)
 ---
 
-Message to Cysaw:
-Obfuscate the code bruh i have access to all security patches
 
 **CysawTool** is a Python tool that automatically downloads applications from cysaw.org by bypassing ShrinkMe protected links.
 
