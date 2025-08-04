@@ -9,7 +9,8 @@
 
 
 # NOT OPEN SOURCE ANYMORE TO PREVENT TOOL PATCH 😘
-
+# TOOL IN "RELEASES"
+---
 
 ## 🤡
 ![clown](image.png)
