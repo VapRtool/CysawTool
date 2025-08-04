@@ -8,8 +8,7 @@
 > And if Cysaw releases an update, the tool will be updated within 30 minutes! (Or much if its by night, my time code: https://time.is/Paris)
 
 
-# NOT OPEN SOURCE ANYMORE TO PREVENT TOOL PATCH 😘
-# TOOL IN "RELEASES"
+# OBFUSCATED TO PREVENT TOOL PATCH 😘
 ---
 
 ## 🤡
